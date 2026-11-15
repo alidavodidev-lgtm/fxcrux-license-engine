@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ConfuserEx2 project file for FXCrux.UI. WPF cannot use Native AOT (unlike
+  fxcrux.Engine - see publish.ps1 in that project), so this is the mitigation
+  for that project's UI binary: obfuscation raises the cost of decompiling it
+  with ILSpy/dnSpy instead of eliminating IL entirely.
+
+  Run via confuse-ui.ps1 after a normal `dotnet publish -c Release`.
+-->
+<project baseDir="bin\Release\net7.0-windows\publish" outputDir="bin\Release\net7.0-windows\publish-confused" xmlns="http://confuser.codeplex.com">
+
+  <!-- XAML-backed classes (Window code-behind): WPF's BAML resolves
+       InitializeComponent(), x:Name fields, and Click="..." event handlers by
+       name at runtime - renaming them breaks the app at first window load.
+       Everything else (anti-debug/anti-tamper/const/ctrl-flow) still applies. -->
+  <rule pattern="type('FXCrux.UI.App') || type('FXCrux.UI.MainWindow') || type('FXCrux.UI.AppHubWindow')" preset="normal" inherit="false">
+    <protection id="anti debug" />
+    <protection id="anti dump" />
+    <protection id="anti ildasm" />
+    <protection id="anti tamper" />
+    <protection id="constants" />
+    <protection id="ctrl flow" />
+    <protection id="invalid metadata" />
+  </rule>
+
+  <!-- Everything else (EngineClient, DTOs, AppInfo, etc.) - full protection
+       including rename, since nothing here is looked up by name via
+       reflection or XAML. -->
+  <rule pattern="true" preset="normal" inherit="false">
+    <protection id="anti debug" />
+    <protection id="anti dump" />
+    <protection id="anti ildasm" />
+    <protection id="anti tamper" />
+    <protection id="constants" />
+    <protection id="ctrl flow" />
+    <protection id="invalid metadata" />
+    <protection id="ref proxy" />
+    <protection id="rename" />
+  </rule>
+
+  <module path="FXCrux.UI.dll" />
+</project>
