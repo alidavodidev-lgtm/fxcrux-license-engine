@@ -13,7 +13,7 @@ Updated 2026-11-16 (Asia/Tehran). This is a standalone local repository from sel
 | Verify builds and tests | done | API and both Next.js production builds passed. API tests passed with eight unit tests and three end-to-end tests. Both Windows solutions compiled with warnings. |
 | Verify the release file set | done | Staged-file Gitleaks scan and Persian-script checks passed. The screenshot review found only synthetic data and English UI text. |
 | Verify the initial commit from a fresh clone | done | Setup, license issuance, validation, and revocation passed from `3b3c0fc`. See the verification record below. |
-| Publish the official GitHub repository | pending | Local preparation only. Follow [GitHub launch notes](docs/PUBLISHING.md) when the maintainer decides to publish. |
+| Keep contributor instructions stable on first startup | done | Both development login pages returned HTTP 200 with `agentRules: false` and preserved their tracked `AGENTS.md` files. |
 
 ## Fresh-clone verification
 
@@ -21,7 +21,7 @@ On 2026-11-16 (Asia/Tehran), a fresh local clone of `3b3c0fc` ran the README set
 
 Admin routes created a customer and a generic desktop software product and issued a license. The portal showed the active license. The Node.js and PowerShell examples accepted it for the same installation. After an admin revoked the license, the portal showed the revoked status, and both examples received HTTP 403.
 
-Starting either web app in development caused Next.js to append its generated rules to the app's tracked `AGENTS.md`. This creates two working-tree changes on the first start from a clean clone. Review the `agentRules` setting before publishing to keep the written contributor guidance stable.
+The first verification found that Next.js appended generated rules to the apps' tracked `AGENTS.md` files. Both apps now use `agentRules: false` and preserve the project's written instructions on development startup. Publication and release milestones are tracked in [GitHub Releases](https://github.com/alidavodidev-lgtm/fxcrux-license-engine/releases).
 
 ## Before deployment
 

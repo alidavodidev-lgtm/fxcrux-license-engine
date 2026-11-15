@@ -16,6 +16,6 @@ Send suspected vulnerabilities through the private channel in [SECURITY.md](SECU
 
 Review the requested behavior, test evidence, compatibility, and security implications before approving a pull request. Include credited contributors in the release notes when they opt in.
 
-After the repository exists on GitHub, associate the CODEOWNERS email with the maintainer's account or replace it with the verified GitHub handle. Protect `main` with a branch ruleset that requires pull requests, code-owner approval, and successful CI. Limit bypass and write access to the maintainer. Set up controls on release tags as needed to keep official `v*` tags under maintainer control.
+Protect `main` so pull requests require code-owner approval and successful CI. The project maintainer is listed in [CODEOWNERS](.github/CODEOWNERS). Keep write access and official `v*` releases under maintainer control.
 
 The maintainer chooses a reviewed commit on `main`, checks release notes and any artifacts, and publishes a GitHub Release from a version tag such as `v0.1.0`. The CI workflow builds and tests proposed changes. An approved pull request may be included with other changes in the next release.
