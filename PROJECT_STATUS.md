@@ -12,7 +12,16 @@ Updated 2026-11-16 (Asia/Tehran). This is a standalone local repository from sel
 | Prepare contribution and launch materials | done | Apache-2.0 license, attribution, contributor credits, PR template, CI workflow, launch copy, and four screenshots with synthetic data |
 | Verify builds and tests | done | API and both Next.js production builds passed. API tests passed with eight unit tests and three end-to-end tests. Both Windows solutions compiled with warnings. |
 | Verify the release file set | done | Staged-file Gitleaks scan and Persian-script checks passed. The screenshot review found only synthetic data and English UI text. |
+| Verify the initial commit from a fresh clone | done | Setup, license issuance, validation, and revocation passed from `3b3c0fc`. See the verification record below. |
 | Publish the official GitHub repository | pending | Local preparation only. Follow [GitHub launch notes](docs/PUBLISHING.md) when the maintainer decides to publish. |
+
+## Fresh-clone verification
+
+On 2026-11-16 (Asia/Tehran), a fresh local clone of `3b3c0fc` ran the README setup with Node.js 24.12.0 and an empty PostgreSQL 18.6 database. All three `npm ci` installs, development starts, and production builds passed. The API passed eight unit tests and three end-to-end tests. The PostgreSQL driver emitted a deprecation warning during the end-to-end run.
+
+Admin routes created a customer and a generic desktop software product and issued a license. The portal showed the active license. The Node.js and PowerShell examples accepted it for the same installation. After an admin revoked the license, the portal showed the revoked status, and both examples received HTTP 403.
+
+Starting either web app in development caused Next.js to append its generated rules to the app's tracked `AGENTS.md`. This creates two working-tree changes on the first start from a clean clone. Review the `agentRules` setting before publishing to keep the written contributor guidance stable.
 
 ## Before deployment
 
