@@ -124,7 +124,7 @@ The end-to-end tests need a running disposable PostgreSQL database and a test `a
 npm --prefix apps/api run test:e2e -- --runInBand
 ```
 
-GitHub Actions runs the builds, API test suites, and a repository language check. The [project status](PROJECT_STATUS.md) records the fresh-clone run and the parts that still need deployment testing.
+GitHub Actions runs the builds, API test suites, and a repository language check. See [GitHub Releases](https://github.com/alidavodidev-lgtm/fxcrux-license-engine/releases) for release notes and verified coverage.
 
 ## Using the pre-release
 
@@ -133,7 +133,5 @@ The first release is intended for local evaluation and integration feedback. The
 ## Contribute
 
 Fork the repository, open a pull request, and explain the behavior and how you verified it. Ali Davodi reviews changes for the official project and publishes official releases. See [Contributing](CONTRIBUTING.md) and [Contributors](CONTRIBUTORS.md).
-
-See [GitHub launch notes](docs/PUBLISHING.md) for repository metadata and release preparation.
 
 Copyright © 2026 Ali Davodi. The project source is available under [Apache-2.0](LICENSE). See [NOTICE](NOTICE) for attribution and the maintainer's contact. The license does not grant trademark rights.

@@ -25,3 +25,7 @@ product-files/
 product-version-files/
 .claude/
 SESSION_STATE.md
+AGENTS.md
+AGENTS.override.md
+/PROJECT_STATUS.md
+/docs/PUBLISHING.md
