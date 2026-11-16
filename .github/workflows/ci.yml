@@ -13,6 +13,7 @@ jobs:
     name: Build and test (${{ matrix.app }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         app: [api, admin, portal]
     steps:
