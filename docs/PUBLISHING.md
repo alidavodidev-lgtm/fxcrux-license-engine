@@ -2,11 +2,11 @@
 
 ## Repository profile
 
-**Suggested repository name** — `fxcrux-license-engine`
+**Repository** — [alidavodidev-lgtm/fxcrux-license-engine](https://github.com/alidavodidev-lgtm/fxcrux-license-engine)
 
 **About description** — Self-hosted software licensing API and admin dashboard for license keys, entitlements, device activation, and product releases.
 
-**GitHub topics** — `software-licensing`, `license-server`, `license-management`, `license-keys`, `entitlement-management`, `self-hosted`, `rest-api`, `nestjs`, `postgresql`, `nextjs`.
+**GitHub topics** — `software-licensing`, `license-server`, `license-management`, `license-keys`, `entitlement-management`, `software-activation`, `device-binding`, `self-hosted`, `rest-api`, `nestjs`, `nextjs`, `postgresql`, `typescript`, `desktop-apps`, `developer-tools`, `docker-compose`.
 
 These terms describe the implementation and match how people browse [software licensing projects on GitHub](https://github.com/topics/software-licensing). Add them in the repository's **About** settings. The [GitHub topics guide](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics) shows where to set them.
 

@@ -1,8 +1,19 @@
 # FXCRUX License Engine
 
-FXCRUX License Engine is a self-hosted software licensing server for desktop apps, plugins, and command-line tools. Run it with your own PostgreSQL database, issue keys from the admin dashboard, and have your app validate licenses over HTTP. Customers can sign in to view their licenses and download eligible releases.
+[![CI](https://github.com/alidavodidev-lgtm/fxcrux-license-engine/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/alidavodidev-lgtm/fxcrux-license-engine/actions/workflows/ci.yml)
 
-Try the [Node.js example](examples/node/check-license.mjs) or the [PowerShell example](examples/powershell/check-license.ps1). The [integration guide](docs/INTEGRATION.md) shows the request and response contract for other clients.
+FXCRUX License Engine is a **self-hosted software license server** for desktop apps, plugins, and command-line tools. Use one admin dashboard to register multiple products, issue license keys, and revoke access. Your application checks the entitlement over HTTP, and your deployment keeps the licensing data in your own PostgreSQL database.
+
+[Install locally](#local-development) · [Issue and test a license](#try-the-licensing-flow) · [Core architecture](#core-architecture) · [Contribute](CONTRIBUTING.md)
+
+## What you can do
+
+- Create a product catalog with your own categories and platform labels, then publish versions and entitlements by product.
+- Issue, extend, and revoke software licenses from the admin dashboard. Review customer accounts and licensing activity.
+- Validate a license against its product, expiry, revocation status, and recorded installation ID through the REST API.
+- Give customers a portal where they can view licenses, download eligible releases, and contact support.
+
+Start with the [Node.js example](examples/node/check-license.mjs) or the [PowerShell example](examples/powershell/check-license.ps1). The [integration guide](docs/INTEGRATION.md) documents the HTTP contract for other clients.
 
 ## Screenshots
 
@@ -21,44 +32,92 @@ These views use an isolated demo database with sample software products.
 
 </details>
 
-## Project layout
+## Core architecture
 
-| Path | What belongs there |
+A desktop app, plugin, or CLI talks directly to the licensing API. The admin dashboard and the customer portal use their own server-side routes to call the same API. PostgreSQL stores product records, license state, and device bindings. The API checks access before serving protected downloads.
+
+| Path | Technology and responsibility |
 | --- | --- |
-| `apps/api` | NestJS licensing API, product catalog, and PostgreSQL persistence |
-| `apps/admin` | Administrator dashboard for products, releases, users, and licenses |
-| `apps/portal` | Customer portal for licenses, downloads, and support |
-| `examples` | Standalone clients for the public HTTP API |
-| `integrations` | Optional Windows engine and original platform adapters |
+| `apps/api` | Node.js 24, NestJS 11, TypeScript, TypeORM, and PostgreSQL |
+| `apps/admin` | Next.js 16 and React 19. Manage products, releases, users, and licenses. |
+| `apps/portal` | Next.js 16 and React 19. View licenses, download products, and manage support requests. |
+| `examples` | Standalone Node.js and PowerShell clients for the REST API |
+| `integrations` | Optional Windows engine, WPF desktop shell, and original platform adapters |
 
 The licensing API can issue and validate keys without a checkout. The inherited commerce screens use USDT when an operator configures payment wallets.
 
 ## Local development
 
-Install Node.js 24 and npm. Use either Docker Compose or a local PostgreSQL instance with an empty database.
+Install Git, Node.js 24, and npm. For the database, use Docker Compose with the included PostgreSQL 16 configuration or an empty local PostgreSQL database.
 
-From the repository root:
+### 1. Get the source and configure the database
 
 ```sh
+git clone https://github.com/alidavodidev-lgtm/fxcrux-license-engine.git
+cd fxcrux-license-engine
 node apps/api/scripts/setup-local.cjs
 docker compose --env-file apps/api/.env up -d --wait
 ```
 
-For a local PostgreSQL instance, skip the Docker command and set the `DB_*` values in `apps/api/.env` to match that instance. The setup script generates credentials for development and writes them to the ignored environment file. Read the bootstrap administrator credentials from that file. Remove the bootstrap password after the first successful login.
+The setup script generates local database and bootstrap administrator credentials and writes them to the ignored `apps/api/.env` file. When using your own PostgreSQL instance, create an empty database, skip the Docker command, and set the `DB_*` values in that file to match your instance.
 
-Open a terminal in each application directory, run `npm ci`, then start the service:
+### 2. Start the applications
 
-| Directory | Start command | Local address |
+From the repository root, install the dependencies:
+
+```sh
+npm --prefix apps/api ci
+npm --prefix apps/admin ci
+npm --prefix apps/portal ci
+```
+
+Run each service in its own terminal from the repository root.
+
+| Service | Command | Local address |
 | --- | --- | --- |
-| `apps/api` | `npm run start:dev` | `http://127.0.0.1:3000` |
-| `apps/portal` | `npm run dev -- --port 3001` | `http://localhost:3001` |
-| `apps/admin` | `npm run dev -- --hostname 127.0.0.1 --port 3002` | `http://localhost:3002/admin-login` |
+| API | `npm --prefix apps/api run start:dev` | `http://127.0.0.1:3000` |
+| Admin dashboard | `npm --prefix apps/admin run dev -- --hostname 127.0.0.1 --port 3002` | `http://localhost:3002/admin-login` |
+| Customer portal | `npm --prefix apps/portal run dev -- --port 3001` | `http://localhost:3001` |
 
-The web apps default to the local API address. Set `BACKEND_URL` in each app's `.env.local` when using a different address. `PORTAL_URL` sets the portal's canonical origin. The database schema synchronization enabled by the setup script is intended for disposable development databases. See [Security](SECURITY.md) before exposing a deployment.
+If your API runs at a different address, set `BACKEND_URL` in each web app's `.env.local`. Set `PORTAL_URL` there for the portal's canonical origin. Use schema synchronization only with disposable development databases. Review the [security policy](SECURITY.md) before exposing a deployment.
 
-## Verify changes
+## Try the licensing flow
 
-Run `npm run build` in each affected app and `npm test -- --runInBand` in `apps/api`. See [project status](PROJECT_STATUS.md) for verification coverage and release work.
+1. Sign in to the admin dashboard with `BOOTSTRAP_ADMIN_USERNAME` and `BOOTSTRAP_ADMIN_PASSWORD` from `apps/api/.env`. After verifying the account works, clear both bootstrap settings before restarting the API.
+2. In **Products**, create a sample product such as a document exporter. Register a customer in **Users**.
+3. In **Licenses**, choose **Issue Manual**, select the customer and product, and set the license duration. Sign in to the customer portal and confirm the license appears.
+4. Find the product's `id` at `http://127.0.0.1:3000/products/list` and the key on the customer's **My Licenses** page. Pass them to the example via `FXCRUX_PRODUCT_ID` and `FXCRUX_LICENSE_KEY`. Set `FXCRUX_API_URL` to the local API address and `FXCRUX_DEVICE_ID` to a stable synthetic installation ID. Keep the license key out of logs and shell history.
+5. Run one of the example clients. Revoke the license in the dashboard and repeat the check to verify that the API denies it with HTTP 403.
+
+```sh
+node examples/node/check-license.mjs
+pwsh -NoProfile -File examples/powershell/check-license.ps1
+```
+
+The endpoint is `POST /licenses/validate`. See the [integration guide](docs/INTEGRATION.md) for the JSON fields, expected errors, and device-binding model.
+
+## Build and test
+
+Run the unit tests and the three application builds from the repository root.
+
+```sh
+npm --prefix apps/api test -- --runInBand
+npm --prefix apps/api run build
+npm --prefix apps/admin run build
+npm --prefix apps/portal run build
+```
+
+The end-to-end tests need a running disposable PostgreSQL database and a test `apps/api/.env` with bootstrap settings. Run them with:
+
+```sh
+npm --prefix apps/api run test:e2e -- --runInBand
+```
+
+GitHub Actions runs the builds, API test suites, and a repository language check. The [project status](PROJECT_STATUS.md) records the fresh-clone run and the parts that still need deployment testing.
+
+## Using the pre-release
+
+The first release is intended for local evaluation and integration feedback. The Windows engine and trading adapters remain optional. For deployments with real customer data, plan schema migrations, a rollback procedure, HTTPS termination, and protected secret storage. See [Security](SECURITY.md) and the [integration notes](integrations/README.md).
 
 ## Contribute
 
