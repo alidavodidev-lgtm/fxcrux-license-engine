@@ -15,21 +15,33 @@ FXCRUX License Engine is a **self-hosted software license server** for desktop a
 
 Start with the [Node.js example](examples/node/check-license.mjs) or the [PowerShell example](examples/powershell/check-license.ps1). The [integration guide](docs/INTEGRATION.md) documents the HTTP contract for other clients.
 
-## Screenshots
+## A look at the licensing workflow
 
-These views use an isolated demo database with sample software products.
+The screenshots below show the project running with sample products in a disposable local database.
 
-### Manage the product catalog
+### Manage software products and releases
+
+In the admin dashboard, give a product its own catalog entry, category, and version. A command-line tool and a desktop app can share one licensing server while keeping separate entitlements.
 
 ![FXCRUX admin product catalog showing categories, versions, and active status](docs/images/admin-product-catalog.jpg)
 
-| Admin overview | Issue a license |
-| --- | --- |
-| ![Admin dashboard showing total users, active licenses, and listed products](docs/images/admin-overview.jpg) | ![License issuance form with customer, product, and duration fields](docs/images/admin-issue-license.jpg) |
+### Track users and active licenses
 
-### Browse products as a customer
+Use the dashboard counts to navigate to customer accounts, active licenses, and pending approvals. Each count opens the corresponding management view.
 
-![Customer portal catalog showing three sample software products](docs/images/customer-software-catalog.jpg)
+![Software licensing dashboard showing total users, active licenses, pending approvals, and listed products](docs/images/admin-overview.jpg)
+
+### Issue a license to a customer
+
+Choose a customer and product, then set the validity period in days. This workflow is useful for evaluation keys, manual sales, or granting access without an online checkout.
+
+![Manual software license issuance form with customer, product, and duration fields](docs/images/admin-issue-license.jpg)
+
+### Publish a customer-facing software catalog
+
+The customer portal lists available products and license plans. Signed-in customers can view their issued licenses and access eligible product downloads from the portal.
+
+![Customer software catalog showing product categories, license plans, and three sample applications](docs/images/customer-software-catalog.jpg)
 
 ## Core architecture
 
