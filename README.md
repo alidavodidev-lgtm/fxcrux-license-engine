@@ -19,18 +19,17 @@ Start with the [Node.js example](examples/node/check-license.mjs) or the [PowerS
 
 These views use an isolated demo database with sample software products.
 
+### Manage the product catalog
+
 ![FXCRUX admin product catalog showing categories, versions, and active status](docs/images/admin-product-catalog.jpg)
 
-<details>
-<summary>Admin overview, license issuance, and customer catalog</summary>
+| Admin overview | Issue a license |
+| --- | --- |
+| ![Admin dashboard showing total users, active licenses, and listed products](docs/images/admin-overview.jpg) | ![License issuance form with customer, product, and duration fields](docs/images/admin-issue-license.jpg) |
 
-![Admin dashboard showing total users, active licenses, and listed products](docs/images/admin-overview.jpg)
-
-![License issuance form with customer, product, and duration fields](docs/images/admin-issue-license.jpg)
+### Browse products as a customer
 
 ![Customer portal catalog showing three sample software products](docs/images/customer-software-catalog.jpg)
-
-</details>
 
 ## Core architecture
 
