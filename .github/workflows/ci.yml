@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, 'release/**']
 
 permissions:
   contents: read
@@ -47,3 +47,10 @@ jobs:
           node apps/api/scripts/setup-local.cjs
           docker compose --env-file apps/api/.env up -d --wait
           npm --prefix apps/api run test:e2e -- --runInBand
+      - if: matrix.app == 'api'
+        name: Start and seed the local demo
+        run: |
+          node scripts/setup-demo.mjs
+          docker compose --env-file .env.demo -f compose.demo.yaml up -d --build --wait --wait-timeout 180
+          node scripts/seed-demo.mjs
+          node scripts/seed-demo.mjs
