@@ -10,8 +10,12 @@ COPY apps/${APP}/ ./
 RUN npm run build && npm prune --omit=dev
 
 FROM node:24.12.0-bookworm-slim
+ARG APP
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 COPY --from=build --chown=node:node /app/ /app/
-RUN chown node:node /app
+RUN chown node:node /app \
+    && if [ "$APP" = api ]; then \
+         install -d -o node -g node uploads product-files product-version-files; \
+       fi
 USER node

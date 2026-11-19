@@ -39,7 +39,9 @@ The portal opens without a registered device in the default setup. To exercise t
 
 The gate checks whether the account has a registered ID. It belongs to the portal UI. Server-side entitlement decisions still come from the API. To exercise a mismatch, validate the same key and product from a separate Windows user profile or a second Windows machine, which will have a different installation ID.
 
-Stop the services with `docker compose --env-file .env.demo -f compose.demo.yaml down`. This keeps the demo database volume. If you want a disposable clean database, use a separate Compose project or explicitly remove the demo volume after stopping the stack.
+Stop the services with `docker compose --env-file .env.demo -f compose.demo.yaml down`. Compose keeps the named volumes for PostgreSQL, public uploads, protected product files and protected version files. The volumes survive an API container rebuild or replacement. When upgrading from an earlier demo configuration, copy any files you want to keep from the old API container before recreating it.
+
+For a clean disposable stack, use a separate Compose project after stopping the active stack so the loopback ports are free. Adding `--volumes` to the `down` command deletes the database and all demo files.
 
 ## Package a Windows prerelease
 

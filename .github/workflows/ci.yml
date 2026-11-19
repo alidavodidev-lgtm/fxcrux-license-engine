@@ -48,9 +48,15 @@ jobs:
           docker compose --env-file apps/api/.env up -d --wait
           npm --prefix apps/api run test:e2e -- --runInBand
       - if: matrix.app == 'api'
-        name: Start and seed the local demo
+        name: Verify the full-stack demo
         run: |
           node scripts/setup-demo.mjs
-          docker compose --env-file .env.demo -f compose.demo.yaml up -d --build --wait --wait-timeout 180
+          demo=(docker compose --env-file .env.demo -f compose.demo.yaml)
+          "${demo[@]}" up -d --build --wait --wait-timeout 180
           node scripts/seed-demo.mjs
           node scripts/seed-demo.mjs
+          "${demo[@]}" exec -T api sh -ec 'for dir in uploads product-files product-version-files; do touch "$dir/.demo-persistence-test"; done'
+          "${demo[@]}" up -d --no-deps --force-recreate --wait --wait-timeout 60 api
+          "${demo[@]}" exec -T api sh -ec 'for dir in uploads product-files product-version-files; do test -f "$dir/.demo-persistence-test"; rm "$dir/.demo-persistence-test"; done'
+          dotnet build tests/demo/DemoLicenseProbe -c Release
+          node tests/demo/licensing-flow.mjs
