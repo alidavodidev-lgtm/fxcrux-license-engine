@@ -1,0 +1,89 @@
+name: fxcrux-demo
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:?Generate demo settings first}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Generate demo settings first}
+      POSTGRES_DB: ${DB_NAME:?Generate demo settings first}
+    volumes:
+      - demo-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/demo.Dockerfile
+      args:
+        APP: api
+    env_file: .env.demo
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_SYNCHRONIZE: "true"
+      ENABLE_LEGACY_ENGINE: "false"
+      PUBLIC_BACKEND_URL: http://localhost:3000
+      ALLOWED_ORIGINS: http://localhost:3001,http://localhost:3002
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["node", "dist/main"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r => { if (!r.ok) process.exitCode = 1 }).catch(() => { process.exitCode = 1 })"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  admin:
+    build:
+      context: .
+      dockerfile: docker/demo.Dockerfile
+      args:
+        APP: admin
+    environment:
+      BACKEND_URL: http://api:3000
+    ports:
+      - "127.0.0.1:3002:3002"
+    depends_on:
+      api:
+        condition: service_healthy
+    command: ["npm", "start", "--", "--hostname", "0.0.0.0", "--port", "3002"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/admin-login').then(r => { if (!r.ok) process.exitCode = 1 }).catch(() => { process.exitCode = 1 })"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  portal:
+    build:
+      context: .
+      dockerfile: docker/demo.Dockerfile
+      args:
+        APP: portal
+        NEXT_PUBLIC_REQUIRE_HARDWARE_BINDING: ${DEMO_REQUIRE_HARDWARE_BINDING:-false}
+    environment:
+      BACKEND_URL: http://api:3000
+      PORTAL_URL: http://localhost:3001
+    ports:
+      - "127.0.0.1:3001:3001"
+    depends_on:
+      api:
+        condition: service_healthy
+    command: ["npm", "start", "--", "--hostname", "0.0.0.0", "--port", "3001"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/').then(r => { if (!r.ok) process.exitCode = 1 }).catch(() => { process.exitCode = 1 })"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  demo-db:

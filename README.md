@@ -72,6 +72,8 @@ docker compose --env-file apps/api/.env up -d --wait
 
 The setup script generates local database and bootstrap administrator credentials and writes them to the ignored `apps/api/.env` file. When using your own PostgreSQL instance, create an empty database, skip the Docker command, and set the `DB_*` values in that file to match your instance.
 
+For the full Docker stack with a sample customer and license, see the [local demo guide](docs/DEMO.md). The Windows app in that guide uses the [FXCRUX .NET SDK](sdk/dotnet/README.md).
+
 ### 2. Start the applications
 
 From the repository root, install the dependencies:
