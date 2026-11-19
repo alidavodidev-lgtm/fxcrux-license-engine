@@ -4,7 +4,13 @@
 
 FXCRUX License Engine is a **self-hosted software license server** for desktop apps, plugins, and command-line tools. Use one admin dashboard to register multiple products, issue license keys, and revoke access. Your application checks the entitlement over HTTP, and your deployment keeps the licensing data in your own PostgreSQL database.
 
-[Install locally](#local-development) · [Issue and test a license](#try-the-licensing-flow) · [Core architecture](#core-architecture) · [Contribute](CONTRIBUTING.md)
+[Try the Docker demo](#quick-start) · [Develop locally](#local-development) · [Core architecture](#core-architecture) · [Contribute](CONTRIBUTING.md)
+
+## Quick start
+
+[Run the complete stack with sample data](docs/DEMO.md) · [Download the Windows x64 demo](https://github.com/alidavodidev-lgtm/fxcrux-license-engine/releases/download/v0.2.0-demo.1/FxcruxLicenseDemo-win-x64.zip) · [Integrate the .NET SDK](sdk/dotnet/README.md)
+
+Use the sample customer's key to activate the Windows app. Check the registered Machine Code in the portal, then revoke the key in the admin dashboard and check it again in the app.
 
 ## What you can do
 
@@ -13,7 +19,7 @@ FXCRUX License Engine is a **self-hosted software license server** for desktop a
 - Validate a license against its product, expiry, revocation status, and recorded installation ID through the REST API.
 - Give customers a portal where they can view licenses, download eligible releases, and contact support.
 
-Start with the [Node.js example](examples/node/check-license.mjs) or the [PowerShell example](examples/powershell/check-license.ps1). The [integration guide](docs/INTEGRATION.md) documents the HTTP contract for other clients.
+Use the [.NET SDK](sdk/dotnet/README.md) or try a [Node.js](examples/node/check-license.mjs) or [PowerShell](examples/powershell/check-license.ps1) example. The [integration guide](docs/INTEGRATION.md) documents the HTTP contract.
 
 ## A look at the licensing workflow
 
@@ -52,7 +58,8 @@ A desktop app, plugin, or CLI talks directly to the licensing API. The admin das
 | `apps/api` | Node.js 24, NestJS 11, TypeScript, TypeORM, and PostgreSQL |
 | `apps/admin` | Next.js 16 and React 19. Manage products, releases, users, and licenses. |
 | `apps/portal` | Next.js 16 and React 19. View licenses, download products, and manage support requests. |
-| `examples` | Standalone Node.js and PowerShell clients for the REST API |
+| `sdk/dotnet` | C# client library for license validation |
+| `examples` | Windows sample using the SDK, plus Node.js and PowerShell REST clients |
 | `integrations` | Optional Windows engine, WPF desktop shell, and original platform adapters |
 
 The licensing API can issue and validate keys without a checkout. The inherited commerce screens use USDT when an operator configures payment wallets.
@@ -71,8 +78,6 @@ docker compose --env-file apps/api/.env up -d --wait
 ```
 
 The setup script generates local database and bootstrap administrator credentials and writes them to the ignored `apps/api/.env` file. When using your own PostgreSQL instance, create an empty database, skip the Docker command, and set the `DB_*` values in that file to match your instance.
-
-For the full Docker stack with a sample customer and license, see the [local demo guide](docs/DEMO.md). The Windows app in that guide uses the [FXCRUX .NET SDK](sdk/dotnet/README.md).
 
 ### 2. Start the applications
 
@@ -126,7 +131,7 @@ The end-to-end tests need a running disposable PostgreSQL database and a test `a
 npm --prefix apps/api run test:e2e -- --runInBand
 ```
 
-GitHub Actions runs the builds, API test suites, and a repository language check. See [GitHub Releases](https://github.com/alidavodidev-lgtm/fxcrux-license-engine/releases) for release notes and verified coverage.
+GitHub Actions runs the application builds, API test suites, and a Compose smoke test that validates and revokes a sample license through the .NET SDK and checks the customer portal state. See [GitHub Releases](https://github.com/alidavodidev-lgtm/fxcrux-license-engine/releases) for the checks that apply to each release.
 
 ## Using the pre-release
 
