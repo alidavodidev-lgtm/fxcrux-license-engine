@@ -6,6 +6,10 @@ FXCRUX License Engine is a **self-hosted software license server** for desktop a
 
 [Try the Docker demo](#quick-start) · [Develop locally](#local-development) · [Core architecture](#core-architecture) · [Contribute](CONTRIBUTING.md)
 
+## Watch the Demo
+
+https://github.com/user-attachments/assets/7ff9ea47-562b-426c-a77a-f7e239bd2e6d
+
 ## Quick start
 
 [Run the complete stack with sample data](docs/DEMO.md) · [Download the Windows x64 demo](https://github.com/alidavodidev-lgtm/fxcrux-license-engine/releases/download/v0.2.0-demo.1/FxcruxLicenseDemo-win-x64.zip) · [Integrate the .NET SDK](sdk/dotnet/README.md)
